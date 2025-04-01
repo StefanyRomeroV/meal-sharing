@@ -17,27 +17,9 @@ mealsRouter.ger("/", async (req, res) => {
 );
  mealsRouter.get("/", async (req, res) => {
   const availableReservations = await getAvailableReservations(req.query.availableReservations);
-  res.json(availableReservations);
-}
-);
-mealsRouter.get("/", async (req, res) => { 
   const title = await getTitle(req.query.title);
-  res.json(title);
-}
-);
-mealsRouter.get("/", async (req, res) => {
   const dateAfter = await getDateAfter(req.query.dateAfter);
-  res.json(dateAfter);
-}
-);
-
-mealsRouter.get("/", async (req, res) => {
   const dateBefore = await getDateBefore(req.query.dateBefore);
-  res.json(dateBefore);
-}
-);
-
-mealsRouter.get("/", async (req, res) => {
   const limit = await getLimit(req.query.limit);
   res.json(limit);
 }
@@ -86,7 +68,6 @@ mealsRouter.delete("/:id", async (req, res) => {
     res.json(meals);
     }
 );
-
 export default mealsRouter;
 
 

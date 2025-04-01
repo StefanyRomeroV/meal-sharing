@@ -1,6 +1,5 @@
 import express from 'express';
 const reservationsRouter = express.Router();
-import { getReservations, getReservationById, createReservation, updateReservation, deleteReservation } from './data/reservations';
 
 
 reservationsRouter.get('/', async (req, res) => {
