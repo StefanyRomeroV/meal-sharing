@@ -1,6 +1,7 @@
 import express from 'express';
 const reviewsRouter = express.Router();
-import { getReviews, getReviewById, createReview, updateReview, deleteReview } from './data/reviews';
+import knex from '../database_client.js';
+
 
 
 
@@ -41,3 +42,5 @@ reviewsRouter.delete('/:id', async (req, res) => {
     res.json(review);
     }
 );  
+
+export default reviewsRouter;

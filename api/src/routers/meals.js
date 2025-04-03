@@ -1,93 +1,93 @@
 import express from "express";  
+import knex from "../database_client.js";
 const mealsRouter = express.Router();
-import { getMeals, getMealById, createMeal, updateMeal, deleteMeal } from "./data/meals";
 
+// Get all meals
+const getAllMeals =async() => {
+  try {
+    const meals = await knex("meals").select("*").orderBy("id", "asc");
+   return(meals);
+  } catch (error) {
+    console.error("Error fetching meals:", error);
+    return [];
+  }};
 
+// Get api/ meals
 mealsRouter.get("/", async (req, res) => {
-  const meals = await getMeals();
+  const meals = await getAllMeals();
   res.json(meals);
 });
-
-//*----h3-----*//
-
-mealsRouter.ger("/", async (req, res) => {
-  const maxPrice = await getMaxPrice (req.query.maxPrice);
-  res.json(maxPrice);
-}
-);
- mealsRouter.get("/", async (req, res) => {
-  const availableReservations = await getAvailableReservations(req.query.availableReservations);
-  res.json(availableReservations);
-}
-);
-mealsRouter.get("/", async (req, res) => { 
-  const title = await getTitle(req.query.title);
-  res.json(title);
-}
-);
-mealsRouter.get("/", async (req, res) => {
-  const dateAfter = await getDateAfter(req.query.dateAfter);
-  res.json(dateAfter);
-}
-);
-
-mealsRouter.get("/", async (req, res) => {
-  const dateBefore = await getDateBefore(req.query.dateBefore);
-  res.json(dateBefore);
-}
-);
-
-mealsRouter.get("/", async (req, res) => {
-  const limit = await getLimit(req.query.limit);
-  res.json(limit);
-}
-);
-mealsRouter.get("/", async (req, res) => {
-  const limit = await getLimit(req.query.limit);
-  res.json(limit);
-}   
-);
-mealsRouter.get("/", async (req, res) => {
-  const sortKey = await getSortKey(req.query.sortKey);
-  res.json(sortKey);
-}
-);
-mealsRouter.get("/", async (req, res) => {
-  const sortDir = await getSortDir(req.query.sortDir);
-  res.json(sortDir);
-}
-);
-//*----h3-----*//
-
-mealsRouter.get("/:id", async (req, res) => {
-  const meals = await getMealById(req.params.id);
-  if (meals) {
-    res.json(meals);
-  } else {
-    res.status(404).json({ error: "Meal not found" });
+//Post api/meals
+mealsRouter.post("/", async (req, res) => {
+  const { title, description, location, price, max_reservations } = req.body;
+  try {
+    const [newMeal] = await knex("meals").insert(
+      { title, description, location, price, max_reservations },
+      ["*"]
+    );
+    res.status(201).json(newMeal);
+  } catch (error) {
+    console.error("Error creating meal:", error);
+    res.status(500).json({ error: "Failed to create meal" });
   }
 });
-    
-mealsRouter.post("/", async (req, res) => {
-    const newMeal = req.body;
-    const meals = await createMeal(newMeal);
-    res.json(meals);
-    });
 
-mealsRouter.put("/:id", async (req, res) => {  
-    const updatedMeal = req.body;
-    const meals = await updateMeal(req.params.id, updatedMeal);
-    res.json(meals);
+
+// Get api/meals/:id
+mealsRouter.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const meal = await knex("meals").where({ id }).first();
+    if (!meal) {
+      return res.status(404).json({ error: "Meal not found" });
     }
-);
+    res.json(meal);
+  } catch (error) {
+    console.error("Error fetching meal:", error);
+    res.status(500).json({ error: "Failed to fetch meal" });
+  }
+});
+// Put api/meals/:id
+mealsRouter.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { title, description, location, price, max_reservations } = req.body;
+  try {
+    const [updatedMeal] = await knex("meals")
+      .where({ id })
+      .update(
+        { title, description, location, price, max_reservations },
+        ["*"]
+      );
+    if (!updatedMeal) {
+      return res.status(404).json({ error: "Meal not found" });
+    }
+    res.json(updatedMeal);
+  } catch (error) {
+    console.error("Error updating meal:", error);
+    res.status(500).json({ error: "Failed to update meal" });
+  }
+});
+
+//delete api/meals/:id
 
 mealsRouter.delete("/:id", async (req, res) => {
-    const meals = await deleteMeal(req.params.id);
-    res.json(meals);
+  const { id } = req.params;
+  try {
+    const deletedMeal = await knex("meals").where({ id }).del();
+    if (!deletedMeal) {
+      return res.status(404).json({ error: "Meal not found" });
     }
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting meal:", error);
+    res.status(500).json({ error: "Failed to delete meal" });
+  }
+}
 );
 
+
 export default mealsRouter;
+
 
 
 
