@@ -36,6 +36,7 @@ apiRouter.use("/reviews", reviewsRouter);
 
 
 app.use("/api", apiRouter);
+ 
 
 app.listen(process.env.PORT, () => {
   console.log(`API listening on port ${process.env.PORT}`);
@@ -60,8 +61,7 @@ apiRouter.get("/future-meals", async (req, res) => {
 
 apiRouter.get("/past-meals", async (req, res) => {
   try{
-    const GET_PAST_MEALS_QUERY =
-     "SELECT * FROM meals WHERE meal_date < NOW() ORDER BY DESC;";
+    const GET_PAST_MEALS_QUERY = "SELECT * FROM meals WHERE `when`< NOW();";
      const pastMeals = await knex.raw(GET_PAST_MEALS_QUERY);
       res.json({ pastMeals });
 
@@ -75,12 +75,38 @@ apiRouter.get("/past-meals", async (req, res) => {
 apiRouter.get("/all-meals", async (req, res) => {
   try {
     const GET_ALL_MEALS_QUERY =
-      "SELECT * FROM meals ORDER BY meal_date DESC;";
+      "SELECT * FROM meals ORDER BY ID ;";
     const allMeals = await knex.raw(GET_ALL_MEALS_QUERY);
     res.json({ allMeals });
   } catch (error) {
     console.error("Error fetching all meals:", error);
     res.status(500).json({ error: "Failed to fetch all meals" });
+  }
+}
+);
+//First meal
+apiRouter.get("/first-meal", async (req, res) => {
+  try {
+    const GET_FIRST_MEAL_QUERY =
+      "SELECT * FROM meals ORDER BY ID LIMIT 1;";
+    const firstMeal = await knex.raw(GET_FIRST_MEAL_QUERY);
+    res.json({ firstMeal });
+  } catch (error) {
+    console.error("Error fetching first meal:", error);
+    res.status(500).json({ error: "Failed to fetch first meal" });
+  }
+}
+);
+//Last meal
+apiRouter.get("/last-meal", async (req, res) => {
+  try {
+    const GET_LAST_MEAL_QUERY =
+      "SELECT * FROM meals ORDER BY ID DESC LIMIT 1;";
+    const lastMeal = await knex.raw(GET_LAST_MEAL_QUERY);
+    res.json({ lastMeal });
+  } catch (error) {
+    console.error("Error fetching last meal:", error);
+    res.status(500).json({ error: "Failed to fetch last meal" });
   }
 }
 );
