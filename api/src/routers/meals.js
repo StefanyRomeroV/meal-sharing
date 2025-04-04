@@ -33,9 +33,7 @@ mealsRouter.post("/", async (req, res) => {
 });
 
 
-// Get api/meals/:id
 mealsRouter.get("/:id", async (req, res) => {
-  const { id } = req.params;
   try {
     const meal = await knex("meals").where({ id }).first();
     if (!meal) {
@@ -70,21 +68,8 @@ mealsRouter.put("/:id", async (req, res) => {
 
 //delete api/meals/:id
 
-mealsRouter.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const deletedMeal = await knex("meals").where({ id }).del();
-    if (!deletedMeal) {
-      return res.status(404).json({ error: "Meal not found" });
-    }
-    res.status(204).send();
-  } catch (error) {
-    console.error("Error deleting meal:", error);
-    res.status(500).json({ error: "Failed to delete meal" });
-  }
-}
-);
 
+);
 
 export default mealsRouter;
 
