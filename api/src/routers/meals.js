@@ -109,8 +109,22 @@ mealsRouter.get("/", async (req, res) => {
       const ValidSortDir = ["asc", "desc"];
       const sortDir = req.query.sortDir.toLowerCase();
       if (ValidSortDir.includes(sortDir)) {
-        sortDir
+        meals.sort((a, b) => {
+          let aValue = a[sortKey];
+          let bValue = b[sortKey];
+          if (typeof aValue === "string") {
+            aValue = aValue.toLowerCase();
+            bValue = bValue.toLowerCase();
+          }
+          if (aValue < bValue) return -1;
+          if (aValue > bValue) return 1;
+          return 0;
+        });
+
+      if (!ValidSortDir.includes(sortDir)) {
+
         return res.status(400).json({ error: "Invalid sortDir value" });
+      }
       }
     };
 
