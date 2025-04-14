@@ -44,7 +44,6 @@ mealsRouter.get("/", async (req, res) => {
         return res.status(400).json({ error: "No matching" });
       }
 
-<<<<<<< HEAD
 mealsRouter.ger("/", async (req, res) => {
   const maxPrice = await getMaxPrice (req.query.maxPrice);
   res.json(maxPrice);
@@ -75,8 +74,7 @@ mealsRouter.get("/", async (req, res) => {
 }
 );
 //*----h3-----*//
-=======
-    };
+  };
     //title
     if (req.query.title) {
       const titleKey = req.query.title.toLowerCase().split(" ");
@@ -160,7 +158,21 @@ mealsRouter.get("/", async (req, res) => {
 );
 
 //Get/Api/meals/:id
->>>>>>> ed9388e437096aeeee7969c9168761f959ea2e17
+mealsRouter.get("/:id", async (req, res) => {
+  try {
+    const allMeals = await getAllMeals();
+    const mealId = +req.params.id;
+    const matchedMeal = allMeals.find((meal) => meal.id === mealId);
+    if (!matchedMeal) {
+      return res.status(404).json({ error: "Meal not found" });
+    }
+    res.status(200).json(matchedMeal);
+  } catch (error) {
+    console.error("Error fetching meal:", error);
+    res.status(500).json({ error: "Failed to fetch meal" });
+  }
+}
+);
 
 mealsRouter.get("/:id", async (req, res) => {
   try {
@@ -221,8 +233,6 @@ mealsRouter.delete("/:id", async (req, res) => {
   }
 }
 );
-<<<<<<< HEAD
-=======
 //GET/api/meals_id/reviews
 mealsRouter.get("/:meal_id/reviews", async (req, res) => {
   try {
@@ -251,7 +261,7 @@ mealsRouter.get("/:meal_id/reviews", async (req, res) => {
 );
 
 
->>>>>>> ed9388e437096aeeee7969c9168761f959ea2e17
+
 export default mealsRouter;
 
 
