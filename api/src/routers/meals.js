@@ -25,6 +25,7 @@ mealsRouter.get("/", async (req, res) => {
           , knex.raw("meal.max_reservations - COUNT(reservations.number_of_guests) AS availableReservations"))
           .groupBy("meals.id")
           .orderBy("availableReservations", "asc");
+          
     }
     //max_price
     if (req.query.max_price) {
@@ -35,7 +36,6 @@ mealsRouter.get("/", async (req, res) => {
       meals = meals.filter((meal) => meal.price <= max_price);
 
     };
-    //availableReservations
     if (req.query.availableReservations) {
       const availableReservations = req.query.availableReservations.toLowerCase() === "true";
       if (availableReservations) {
@@ -44,37 +44,7 @@ mealsRouter.get("/", async (req, res) => {
         return res.status(400).json({ error: "No matching" });
       }
 
-mealsRouter.ger("/", async (req, res) => {
-  const maxPrice = await getMaxPrice (req.query.maxPrice);
-  res.json(maxPrice);
-}
-);
- mealsRouter.get("/", async (req, res) => {
-  const availableReservations = await getAvailableReservations(req.query.availableReservations);
-  const title = await getTitle(req.query.title);
-  const dateAfter = await getDateAfter(req.query.dateAfter);
-  const dateBefore = await getDateBefore(req.query.dateBefore);
-  const limit = await getLimit(req.query.limit);
-  res.json(limit);
-}
-);
-mealsRouter.get("/", async (req, res) => {
-  const limit = await getLimit(req.query.limit);
-  res.json(limit);
-}   
-);
-mealsRouter.get("/", async (req, res) => {
-  const sortKey = await getSortKey(req.query.sortKey);
-  res.json(sortKey);
-}
-);
-mealsRouter.get("/", async (req, res) => {
-  const sortDir = await getSortDir(req.query.sortDir);
-  res.json(sortDir);
-}
-);
-//*----h3-----*//
-  };
+    };
     //title
     if (req.query.title) {
       const titleKey = req.query.title.toLowerCase().split(" ");
@@ -138,11 +108,9 @@ mealsRouter.get("/", async (req, res) => {
     if (req.query.sortDir) {
       const ValidSortDir = ["asc", "desc"];
       const sortDir = req.query.sortDir.toLowerCase();
-      if (!ValidSortDir.includes(sortDir)) {
+      if (ValidSortDir.includes(sortDir)) {
+        sortDir
         return res.status(400).json({ error: "Invalid sortDir value" });
-      }
-      if (sortDir === "desc") {
-        meals.reverse();
       }
     };
 
